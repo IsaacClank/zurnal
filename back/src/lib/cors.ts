@@ -1,6 +1,11 @@
 import cors from 'cors';
 import { corsOrigin } from '../config';
 
-export const corsService = cors({
-  origin: corsOrigin,
-});
+const corsService = () =>
+  cors({
+    origin: corsOrigin,
+    optionsSuccessStatus: 204,
+    credentials: true,
+  });
+
+export default corsService;
