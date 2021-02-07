@@ -1,22 +1,31 @@
 {
   "name": "zurnal-backend",
   "version": "0.1.0",
+  "license": "MIT",
   "dependencies": {
     "@prisma/client": "^2.16.0",
     "bcryptjs": "^2.4.3",
     "compression": "^1.7.4",
+    "connect-redis": "^5.0.0",
     "cors": "^2.8.5",
     "express": "^4.17.1",
     "express-session": "^1.17.1",
+    "nanoid": "^3.1.20",
+    "nodemailer": "^6.4.17",
+    "redis": "^3.0.2",
     "uuid": "^8.3.2"
   },
   "devDependencies": {
     "@types/bcryptjs": "^2.4.2",
     "@types/compression": "^1.7.0",
+    "@types/connect-redis": "^0.0.16",
     "@types/cors": "^2.8.9",
     "@types/express": "^4.17.11",
     "@types/express-session": "^1.17.3",
+    "@types/nanoid": "^2.1.0",
     "@types/node": "^14.14.22",
+    "@types/nodemailer": "^6.4.0",
+    "@types/redis": "^2.8.28",
     "@types/uuid": "^8.3.0",
     "dotenv": "^8.2.0",
     "nodemon": "^2.0.7",
@@ -26,6 +35,7 @@
   },
   "scripts": {
     "clean": "rm -rf node_modules dist",
-    "dev": "nodemon -r dotenv/config -e ts,json --delay 1500ms src/app.ts"
+    "dev": "nodemon -r dotenv/config -e ts,json --delay 1500ms src/app.ts",
+    "exec": "nodemon -r dotenv/config -e ts,json"
   }
 }

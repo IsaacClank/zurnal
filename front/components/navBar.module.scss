@@ -1,0 +1,42 @@
+#NavBarWrapper {
+  position: fixed;
+  top: 0px;
+  width: 100%;
+}
+
+#NavBar {
+  width: 100%;
+  display: flex;
+  justify-content: space-between;
+
+  .navCol {
+    display: flex;
+    flex-grow: 1;
+    margin: 0em 1em;
+  }
+
+  #NavHomeCol {
+    @extend .navCol;
+
+    div {
+      font-weight: 900;
+      font-size: 2rem;
+      cursor: pointer;
+    }
+  }
+
+  #NavAuthCol {
+    @extend .navCol;
+    justify-content: flex-end;
+
+    div {
+      padding: 0.5em;
+      text-align: center;
+      cursor: pointer;
+      svg {
+        width: 1.5em;
+        height: 1.5em;
+      }
+    }
+  }
+}
