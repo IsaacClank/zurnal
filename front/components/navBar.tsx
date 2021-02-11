@@ -1,90 +1,53 @@
-import { FaUserCircle } from 'react-icons/fa';
-import { useQuery, useQueryClient } from 'react-query';
+import { QueryClient, useQuery } from 'react-query';
 import Link from 'next/link';
 
 import style from './navBar.module.scss';
-import { reqGet } from 'lib/utils';
+import { reqDel, reqGet } from 'lib/utils';
 import { APIAddr } from 'config';
-import { useEffect, useState } from 'react';
 import { useMutation } from 'react-query';
 import { useRouter } from 'next/dist/client/router';
 
-const ProfileButton = ({ auth }) => {
-  const [isActive, setActiveStatus] = useState(false);
-  const queryClient = useQueryClient();
-  const router = useRouter();
-
-  const sessionMutation = useMutation(() => reqGet(`${APIAddr}/auth/signout`), {
-    onSuccess: _ => {
-      queryClient.invalidateQueries('auth').then(() => {
-        router.reload();
-      });
-    },
-  });
-
-  return (
-    <div
-      id={style.Profile}
-      className={isActive ? style.active : ''}
-      tabIndex={0}
-      onClick={() => setActiveStatus(s => !s)}
-    >
-      <FaUserCircle />
-      {isActive ? (
-        <div className={style.dropdownMenu}>
-          <button
-            onClick={e => {
-              e.preventDefault();
-              sessionMutation.mutate();
-            }}
-          >
-            Sign out
-          </button>
-        </div>
-      ) : null}
-    </div>
-  );
-};
-
 const NavBar = () => {
-  const [count, setCount] = useState(0);
   const { data, status } = useQuery<{ isAuthenticated: boolean }>('auth', () =>
     reqGet(`${APIAddr}/auth`)
   );
-  const queryClient = useQueryClient();
 
-  useEffect(() => {
-    setTimeout(() => {
-      setCount(c => c + 1);
-    }, 3000);
+  const queryClient = new QueryClient();
+  const router = useRouter();
+  const authMutation = useMutation(() => reqDel(`${APIAddr}/auth/signout`), {
+    onSuccess: () => {
+      queryClient.invalidateQueries('auth');
+      router.reload();
+    },
   });
 
-  useEffect(() => {
-    setTimeout(() => {
-      queryClient.invalidateQueries('auth');
-    }, 3000);
-  }, [count]);
+  const signOutHandler = (e: any) => {
+    e.preventDefault();
+    authMutation.mutate();
+  };
 
-  return (
-    <div id={style.NavBarWrapper}>
-      <div id={style.NavBar}>
-        <div id={style.NavHomeCol}>
-          <Link href='/'>
-            <div>ZURNAL</div>
-          </Link>
-        </div>
-        <div id={style.NavAuthCol}>
-          {status === 'success' && data.isAuthenticated === true ? (
-            <ProfileButton auth={data.isAuthenticated} />
-          ) : (
-            <Link href='/auth'>
-              <div id={style.Signin}>Sign in</div>
+  if (status === 'success' && data.isAuthenticated)
+    return (
+      <div id={style.NavBarWrapper}>
+        <div id={style.NavBar}>
+          <div id={style.NavHomeCol} className={style.navCol}>
+            <Link href='/'>
+              <div>ZURNAL</div>
             </Link>
-          )}
+          </div>
+          <div id={style.NavButtonsCol} className={style.navCol}>
+            <Link href='/new'>
+              <button>New+</button>
+            </Link>
+            <Link href='/profile'>
+              <button>Profile</button>
+            </Link>
+            <button onClick={signOutHandler}>Sign out</button>
+          </div>
         </div>
       </div>
-    </div>
-  );
+    );
+  else return null;
 };
 
 export default NavBar;

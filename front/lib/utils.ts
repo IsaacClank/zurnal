@@ -16,3 +16,10 @@ export const reqGet = async (url: RequestInfo, option?: RequestInit) =>
     credentials: 'include',
     ...option,
   }).then(r => r.json());
+
+export const reqDel = async (url: RequestInfo, option?: RequestInit) =>
+  fetch(url, {
+    credentials: 'include',
+    method: 'DELETE',
+    ...option,
+  }).then(r => r.json());

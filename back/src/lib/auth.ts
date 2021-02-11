@@ -1,11 +1,12 @@
 import { v4 } from 'uuid';
 import { nanoid } from 'nanoid';
-import { DatabaseClient } from './database';
+import { prismaClient } from './database';
 import RedisClient from './redisClient';
-import MailTransportClient from './mail';
+import { MailTransportClient } from './mail';
 import { corsOrigin, sendgridSender } from '../config';
 import { ErrorObject } from './type';
 import { promisify } from 'util';
+import { User } from '@prisma/client';
 
 export const waitVerify = (email: string, done: (error?: ErrorObject, id?: string) => void) => {
   const redisClient = RedisClient();
@@ -32,10 +33,9 @@ export const waitVerify = (email: string, done: (error?: ErrorObject, id?: strin
   );
 };
 
-export const signin = async (email: string, id: string) => {
+export const signin = async (email: string, id: string): Promise<User> => {
   const redis = RedisClient();
   const getAsync = promisify(redis.get).bind(redis);
-  const db = DatabaseClient();
 
   return (
     getAsync(`verify-${email}`)
@@ -56,11 +56,12 @@ export const signin = async (email: string, id: string) => {
       // Authenticate user
       // Create new user account with email if it doesn't exist
       .then(() =>
-        db.user.findUnique({
+        prismaClient.user.findUnique({
           where: {
             email,
           },
           select: {
+            account_id: true,
             username: true,
             email: true,
           },
@@ -69,10 +70,15 @@ export const signin = async (email: string, id: string) => {
       .then(u =>
         u?.email
           ? u
-          : db.user.create({
+          : prismaClient.user.create({
               data: {
                 account_id: v4(),
                 email,
+              },
+              select: {
+                account_id: true,
+                email: true,
+                username: true,
               },
             })
       )

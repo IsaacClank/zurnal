@@ -9,5 +9,4 @@ router.get('/', (_, res, next) => {
   return next();
 });
 
-const indexRouter = router;
-export default indexRouter;
+export { router as indexRouter };

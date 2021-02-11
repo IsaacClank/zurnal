@@ -16,9 +16,6 @@ const AuthForm = () => {
       e.preventDefault();
       reqPost({ email }, `${APIAddr}/auth/request`).then(_ => {
         setVerificationStatus(true);
-        setTimeout(() => {
-          router.push('/');
-        }, 3000);
       });
     },
     [email, router]

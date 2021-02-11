@@ -27,7 +27,7 @@ router.post('/request', (req, res, next) => {
 });
 
 router.get('/signin/:id', async (req, res, next) => {
-  AuthService.signin((req.session as PlainObject).user.email, req.params.id)
+  AuthService.signin((req.session as PlainObject).user.email, req.params.id as string)
     .then(u => {
       res.locals.msg = { isAuthenticated: true, user: u };
       (req.session as PlainObject).user = u;
@@ -45,13 +45,12 @@ router.get('/signin/:id', async (req, res, next) => {
     .finally(() => next());
 });
 
-router.get('/signout', (req, res, next) =>
+router.delete('/signout', (req, res, next) =>
   req.session.destroy(error => {
     if (error) res.locals.err = { error };
-    else res.locals.msg = { isAuthenticated: false };
+    else res.locals.msg = { success: true, isAuthenticated: false };
     return next();
   })
 );
 
-const authRouter = router;
-export default authRouter;
+export { router as authRouter };
